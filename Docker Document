@@ -1,0 +1,673 @@
+What is monolithic?
+If an application contains N number of services (Let's take Paytm has Money Transactions, Movie Tickets, Train tickets, etc..)
+If all these services are included in one server then it will be called Monolithic Architecture. Every monolithic Architecture has only one database for all the services.
+
+Scenario:
+===============
+in any bug is in one service then need to stop and reactify at that time full application is not working that is the disadvantage in monothlithic 
+So, that'swhy we are using micro services 
+
+what is Micro Services?
+If an application contains N number of services (Let's take Paytm has Money Transactions, Movie Tickets, Train tickets, etc..)
+if every service has its own individual servers then it is called microservices. Every microservice architecture has its own database for each service.
+
+Why Docker?
+let us assume that we are developing an application, and every application has front end, backend and Database.
+To develop the application we need install those dependencies to run to the code.
+So i installed Java11, ReactJS and MongoDB to run the code.
+After some time, i need another versions of java, react and mongo DB for my application to run the code.
+So its really a hectic situation to maintain multiple versions of same tool in our system.
+To overcome this problem we will use virtualization.
+
+virtualization
+===========================
+It is used to create a virtual machines inside on our machine. in that virtual machines we can hots guest OS in our machine.
+by using this Guest OS we can run multiple application on same machine.
+Hypervisor is used to create the virtualisation
+
+DRAWBACKS:
+It is old method.
+If we use multiple guest OS then the performance of the system is low.
+
+instead of containers we will use containers
+for VM'S creation using Hypervisor
+for Containers using Docker 
+
+CONTAINERIZATION:
+It is used to pack the application along with its dependencies to run the application.
+
+CONTAINER:
+Container is nothing but, it is a virtual machine which does not have any OS.
+Docker is used to create these containers.
+A container is like a lightweight
+It includes the application code, runtime, system libraries, and dependencies.
+To create a container we use docker.
+
+DOCKER:
+It is an open source centralized platform designed to create, deploy and run applications.
+Docker is written in the Go language.
+Docker uses containers on host O.S to run applications. It allows applications to use the same Linux kernel as a system on the host computer, rather than creating a whole virtual O.S.
+We can install Docker on any O.S but the docker engine runs natively on Linux distribution.
+Docker performs O.S level Virtualization also known as Containerization.
+Before Docker many users face problems that a particular code is running in the developer’s system but not in the user system.
+It was initially released in March 2013, and developed by Solomon Hykes and Sebastian Pahl.
+Docker is a set of platform-as-a-service that use O.S level Virtualization, where as VM ware uses Hardware level Virtualization.
+Container size is very small
+
+DOCKER COMPONENTS:
+
+DOCKER CLIENT: (where we can perform the commands) like docker run, docker pull, docker build
+It is the primary way that many Docker users interact with Docker. When you use commands such as docker run, the client sends these commands to docker daemon, which carries them out.
+The docker command uses the Docker API.
+
+DOCKER HOST:
+Docker host is the machine where you installed the docker engine.
+
+DOCKER DAEMON:
+Docker daemon runs on the host operating system. It is responsible for running containers to manage docker services. Docker daemon communicates with other daemons.
+It offers various Docker objects such as images, containers, networking, and storage.
+
+DOCKER REGISTYR:
+ADocker registry is a place where Docker images are stored and can be easily shared. It serves as a centralized repository for Docker images, allowing users to upload, download, and manage container images
+Ex:Docker Hub (it is a central respository where we can manage the manages )
+---> AWS (ECR) Elastic Container Registry 
+--> Azure (ACR) Azure Container Registry
+--> GCP (GCR) Global Container Registry
+
+
+DOCKER BASIC COMMANDS:
+To install docker in Linux : yum install docker -y && systemctl start docker && systemctl enable docker
+
+To see the docker version : docker --version
+
+To start the docker service : service docker start
+
+To check service is start or not : service docker status
+
+To check the docker information : docker info
+
+To see all images in local machine : docker images
+
+To fi nd images in docker hub : docker search image name
+
+To download image from docker hub to local : docker pull image name
+
+to create the image from docker file : docker build -t imagename .(current directory )
+
+to create the container: docker run -itd --name containername -p hostport:containerport imagename:tag
+
+to find out the container port(depends on image) and information we can use the Inspect the image  : docker image inspect imagename:tag 
+
+To start container : docker start container name
+
+To go inside the container : docker exec -it containername bash
+
+To see all the details inside container : cat /etc/os-release
+
+To get outside of the container : exit
+
+To see all containers : docker ps -a
+
+To see only running containers : docker ps(ps: process status)
+
+To see only exited containers: docker ps -q -f "state=exited"
+
+To stop the container : docker stop container name
+
+To delete container : docker rm container name
+
+To stop all the containers :docker stop $(docker ps -a -q)
+
+To delete all the stopped containers : docker rm $(docker ps -a -q)
+
+To delete all images :docker rmi -f $(docker images -q)
+
+DOCKER RENAME: is used to rename the container.
+To rename docker container: docker rename old_container new_container
+
+ALTERNATE CONTAINER COMMANDS:
+To see list of containers : docker container ls
+To see all running containers: docker container ls -a
+To see latest container : docker container ls --latest
+To see all container id's :docker ls -a -q
+To remove all containers : docker container rm -f $(docker container ls -aq)
+To see containers with sizes :docker container ls -a -s
+To stop container : docker stop  cont_name
+
+RUNNING A CONTAINER:
+docker run --name cont1 -d nginx
+docker inspect cont1
+curl container_private_ip:80
+docker run --name cont2 -d -p 8081(hostport):80(container port) nginx
+
+DOCKER EXEC: is a command that allows you to run commands inside a running Docker container
+You can use docker exec to execute commands, check the container's fi le system, troubleshoot issues, or perform various tasks within the container
+without the need to start a new instance of the container.
+
+syntax
+docker exec -it(means interactive) cont_name command
+ex-1:
+docker exec -it cont1 ls
+ex-2:
+docker exec -it cont mkdir devops
+
+CREATE IMAGE FROM CONTAINER/ CREATE IMAGE FROM Dockerfile:
+===================================================================
+
+DOCKER FILE:
+It is basically a text fi le which contains some set of instructions.
+Automation of Docker image creation.
+Always D is capital letters on Docker file.
+And Start Components also be Capital letter.
+
+HOW IT WORKS:
+First you need to create a Docker file
+Build it
+Create a container using the image
+
+
+DOCKER FILE COMPONENTS:
+FROM: For base image this command must be on top of the fi le. Ex: ubuntu, Redis, Jenkins
+LABEL: Labeling like EMAIL, AUTHOR,image description etc.
+RUN: To execute commands while we build the image
+COPY: Copy fi les/folders from local system to container where need to provide Source and Destination.
+ADD: it is also used to copy the fi les and also It can download fi les from the internet and and send the fi les to container.
+EXPOSE: To expose ports such as 8080 for tomcat and port 80 nginx etc.
+WORKDIR: To set working directory for the Container.
+CMD: Executes commands but during Container creation.
+ENTRYPOINT: The command that executes inside of a container. like running the services in a container.
+ENV: Environment Variables. ENV 
+
+PULL vs RUN:
+PULL: It is used to download the images from docker registry
+RUN: It is used to create a container.
+
+RUN vs CMD vs ENTRYPOINT:
+RUN: it is used to execute the commands while we build the images and add a new layer into the image.
+CMD: it is used to execute the commands when we run the container.
+if we have multiple CMD’s only last one will gets executed.
+ENTRYPOINT: it overwrites the CMD when you pass additional parameters while running the container.
+COPY vs ADD:
+COPY: Used to copy local fi les to containers
+ADD: Used to copy fi les form internet and extract them
+
+EXPOSE(internal access) VS PUBLISH(external access):
+
+Simple Example:
+DOCKER FILE TO CREATE AN IMAGE:
+
+FROM ubuntu
+RUN touch aws devops linux
+
+TO BUILD:
+docker build -t image_name:tag value  . (. represents current directory)
+docker run -d --name containername image:tagvalue 
+if we not provide tag value by default latest will create   as a tag 
+i didn't provide ports bcz this is for simple for example
+
+
+2)FROM ubuntu
+RUN touch aws devops linux
+RUN echo "hello world">/tmp/fi le1
+
+Now see the image and create a new container using this image.
+Go to container and see the fi les that you created.
+
+
+write a docker file for webservers:
+--> DOCKER FILE TO INSTALL NGINX ON UBUNTU:
+FROM ubuntu
+RUN apt update -y
+RUN apt install nginx -y
+COPY index.html /var/www/html
+EXPOSE 80
+CMD ['nginx', "-g", "daemon off;"]
+
+--> DOCKER FILE TO INSTALL APACHE2 ON UBUNTU:
+FROM ubuntu
+RUN apt update -y
+RUN apt install apache2 -y
+copy index.html /var/www/html
+CMD["/usr/sbin/apachectl" "-D", "FOREGROUD"]
+       OR
+CMD["apachectl - foregroud"]
+
+--> we can write same for DOCKER FILE TO INSTALL httpd ON UBUNTU:
+
+===> WRITE A DOCKERFILE FOR APPLICATION SERVERS
+EX : Take code from anywhere (python code)
+we can clone that project and then install doker
+in server  
+git install
+git clone repositoryurl
+and then install docker
+
+first we can see the manually how to deploy the python code 
+
+by defauly python will be there in server, if it is not there we can install and check version
+this is amazon linux so we can use YUM package manager
+yum install python-pip -y
+pip install -r requirements.txt(dependicies are there)
+--> if it is java code all dependencies in pom.xml
+python app.py(application code)
+then we can access with public ip and application port 
+
+DOCKER FILE FOR PYTHON 
+===================================
+FROM python 
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD["python", "app.py"]
+
+create immage using docker file and create container and then run the application in container
+
+DOCKER FILE FOR NODE
+==========================================
+FROM node
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+CMD["node" "index.js"]
+               or file path we can give
+
+DOCKER FILE FOR DATABASE
+===========================================
+first take one query and create file with exact name  (filename.sql)
+vim init.sql
+
+FROM mysql
+EXPOSE 3306
+COPY init.sql /docker-entrypoint-inintdb.d
+ENV MYSQL_ROOT_PASSWORD= admin123 (by default root will be there, so we can set the password for root)
+
+
+create image and container
+docker run -d --name conta1 -p 1111:3306 image:tag
+
+go to container  = docker exec -it containername bash
+for login 
+mysql -u root -P  > enterpassword
+show databases;
+use dbname;
+show tables;
+select * from tablename;
+
+
+Before we write the normal docker files
+
+NOW DISCUSSING ABOUT PRODUCTION GRADE FILES
+========================================================
+we can follow 10 Golden files
+
+1) use supported base images
+2) prefer alpine/distroless/slim where appropriate
+3) use multi stage builds
+4)don't run a root
+5) don't store secrets(passwords, usernames) in Dokcer file
+6)use .Dockerignore
+7) pin application dependencies
+8)Don't install unnecessary packages
+9) Don't use latest in production
+10) scan image with trivy
+
+TRIVY : we can check any security issues or vulnerbilities are there or not using trivy
+how to install
+===================
+got to official doc (trivy.dev) and take that url and downloaded
+
+SYNTAX :
+trivy image imagename:tag
+
+then we will get overall report
+
+Before we created images usimg docker right then if same image will scan with trivy then we will get more vulnerbilities
+BCZ we didn't follow the rules
+
+NOW WE WILL FOLLOW THE RULES
+=======================================
+NGINX
+vim Dockerfile
+FROM nginx:alpine
+RUN rm -rf /usr/share/nginx/html
+COPY index.html /usr/share/nginx/html
+RUN chown -R nginx:nginx /usr/share/nginx/html
+USER nginx
+EXPOSE 80
+CMD["nginx", "-g", ""daemon off;"]
+--> create a image and scan with trivy and observer before report and after report
+
+HTTPD
+vim Dockerfile
+
+FROM httpd:alpine( we can use dockerhub)
+RUN rm -rf /usr/local/apache2/htdocs
+COPY index.html /usr/local/apche2/htdocs
+RUN chown -R daemon:daemon /usr/local/apache2/htdocs
+USER daemon
+CMD["httpd - foregroud"]
+--> create images and check vulnerbilities with trivy
+
+NODEJS
+vim Dockerfile
+
+FROM node:22-alpine(use dockerhub ) dont take the latest bcz everytime it will change 
+WORKDIR /app
+COPY packages*.json .
+RUN npm install --production
+RUN  --chown=node:node . .
+USER node
+CMD["node", "index.js"/file path]
+
+PYTHON file
+====================
+FROM python:slim 
+
+
+
+
+
+
+MULTI-STAGE DOCKER FILE 
+======================================
+FROM node:22-alpine as dependencies
+WORKDIR /app
+COPY package*.json ./
+RUN npm  ci  (install all dependencies)
+
+
+FROM node:22-alpine as build
+WORKDIR /app
+COPY --from=dependencies /app/node_modules ./node_modules  
+COPY . .
+RUN npm run build
+
+
+FROM node:22-alpine as prod
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev  (expect dev dependencies only take the production dependencies)
+COPY --from=build /app/dist ./dist
+EXPOSE 3000
+USER node
+CMD ["node", "dist/server.js"]
+
+
+dependencies store in node modules 
+after build that data stored in /app/dist(default)
+
+Advantages of multistage file
+=================================
+--> deployment fast
+--> image size is reduced
+--> have better security
+
+
+in single stage file, code and depen and app start is there
+
+
+HOW TO STORE THE IMAGES IN DOCKERHUB
+================================================
+first create Dockerhub account and create repository 
+
+-> first create a image using docker file 
+- then how to push the image from local to Dockerhub
+we can follow syntax
+Dockerhub-username/repo-name:tag
+SandhyaM/Docker:new(our wish)
+--> we can login into dockerhub in server
+   . docker login
+   . it will ask username and password
+   . docker push SandhyaM/Docker:tag-value
+
+DELETE HE IMAGES
+=====================
+
+docker rmi imagename:tag
+docker rmi sandhyaM//Docker:tag
+
+HOW TO PULL THE IMAGE FROM DOCKERHUB
+========================================
+docker pull sandhyaM/Docker:tag
+
+
+
+
+4 pillars( containers, images, volumes, networks)  and 3 Foundations(docker compose, swam, stack)
+
+VOLUMES:
+=================
+Scenario: if container have huge load after that container will crash suppose then we lose the data so docker give volumes to 
+persist the data 
+
+--> When we create a Container then Volume will be created.
+--> Volume is simply a directory inside our container.
+-- > First, we have to declare the directory Volume and then share Volume.
+--> Even if we stop/delete the container still, we can access the volume.
+--> You can declare directory as a volume only while creating container.
+--> We can’t create volume from existing container.
+--> You can share one volume across many number of Containers.
+--> Volume will not be included when you update an image.
+--> If Container-1 volume is shared to Container-2 the changes made by Container-2 will be also available in the Container-1.
+
+volumes are indepedent, if container is deleted/crash, after that also we can access the volume and attach to differnet container
+
+RULE1:
+we can't attched a volume to an existing container wile creating the container we can attach the volume
+RULE2:
+we can share our volume to multiple container
+
+
+USES OF VOLUMES:
+===========================================
+Decoupling Container from storage.
+Share Volume among different Containers.
+Attach Volume to Containers.
+On deleting Container Volume will not be deleted.
+
+
+
+You can map Volume in two ways:
+1.
+Container < ------ > Container
+2.
+Host < ------- > Container
+
+
+Container < ------ > Container
+=======================================================
+
+--> if you add volume to container then data is replicated, if in one (C) deleted the data then in (V) 
+automatically delete the data, in remaining containers data will gone
+
+
+we can create a voulme from Docker file and commands 
+=========================================================
+
+VOLUMES COMMANDS:
+docker volume ls      - list of volumes
+docker volume create <volume-name>   - create a volume
+docker volume rm <volume-name>        - remove the volume
+docker volume prune (it will remove all unused docker volumes).
+docker volume inspect <volume-name>   - to get know information
+docker container inspect <container-name>
+
+docker volume create mydata
+docker run -itd --name cont1 --mount src= mydata(volume), destination=/Sandhya/ image(ubuntu)
+
+mount means it is the process of volume attach to the system
+
+--> By default destination path won't be there (we can mentioned to which path you can attched in container)
+
+Default path : /var/lib/docker/images, container , volumes
+
+cd /volumes
+ls 
+cd mydata-> _data (by default it will create )
+cd _data/
+
+ls (we can use our data )
+
+Delete the container
+======================
+first we stop and remove the container
+still data will be there in voulmes 
+
+that voulme we can attach to the differnt container
+
+Scenario:
+Now create two containers, if add the data in c2 then automatically replicate in c1 and (V) also
+If you deleted/updated in C1 then replicate in C2 and V also 
+
+docker run -itd --name cont1 --mount src= mydata, destination= /devops ubuntu
+docker run -itd --name cont2 --mount src= mydata, destination= /devops ubuntu
+
+how to get the default volume mount path, then we can inspect the volume 
+
+docker volume inspect mydata 
+
+
+problem: if you deleted the container automatically deleted the data in volume also so we can use read only
+
+for existing containers we can't do anything, for creating new containers we can give readonly 
+
+--> docker run -itd --name cont1 --mount src=mydata, destination= /sandhya, readonly ubuntu
+
+--> whenever we go into the container, then if try to modified/deleted the data we will get error
+But we can add/modified/updated/deleted in volumes and replicated the data in containers also
+
+
+Two types of volumes
+=====================
+1) named voulmes (before we created the voulme)
+docker run -itd --name cont1 -v volumename:/sandhya(path) ubuntu(image)
+2) unnamed volumes (while creating the container some volume created)
+docker run -itd --name cont2 -v /mypath ubuntu
+
+for ubuntu(-itd)
+inreal time(-d)
+
+Host < ------- > Container
+========================================
+here no need to create to volumes , just mount the path to container
+==> mostly we can use in dev env
+ex: mkdir myapp
+cd myapp
+vim index.html (i want to this file to container)
+
+docker run -d --name cont1 -p 1111:80 -v $(pwd)= /usr/share/nginx/html mginx
+
+Then we can access the application with port and if updated the file then automatically updated in container also 
+
+==> in future if we can write the docker file everytime we have updated the file so everytime we need to create images and containers 
+here no need to create everytime if we updated the file then automatically updated in container then we can access the application
+
+
+NETWORKS
+================================
+Scenario: suppose we have one frontend , backend , and database/ payment/cart services are there
+for everything we need create seperate conatiners and by default every container communicate each other from 
+frontend to db/payment/cart, in that situations attcher still our data from frontend side, bcz there is no security 
+so only frontend communicate to backend and backend communicate to database/cart/payment and payment won't communicate with cart/database 
+
+--> attacher will attach the week containers, if attacker will attch one container he will steel data, then 
+from remaining containers also so we should provide the security
+that'swhy network concept came 
+
+--> for every containers by default bridge n/w will create 
+--> create two cont's , we will check whether the communicate is there or not from cont1 to cont2 and viseversa
+--> for ip addess we can inspect the containers
+then we can go into conta and ping cont2 ip if we will get response then communication eachother
+
+by default ping package it won;t be there we need to install in server
+
+==> apt update -y && apt install iputils-ping -y
+
+==> in container which OS is there then
+cat /etc/os-release
+
+docker network ls
+(by default 3 n/w's will be there 
+
+DOCKER NETWORKS:
+Docker networking is primarily used to establish communication between Docker containers and the outside world. Docker supports different types of networks.
+
+When we install Docker, it created three networks automatically.
+1.Bridge (Bridge is the default network)
+2.None(With a none network the docker container is not attached to any other network.)
+3.Host(If we want to access the containers externally, then we can attach the container to Host network.)
+4.OverLay (Used to communicate containers with each other across the multiple docker hosts.)
+
+
+DOCKER NETWORK COMMANDS:
+--> To create a network: docker network create network_name
+--> To see the list: docker network ls
+--> To delete a network: docker network rm network_name
+--> To inspect: docker network inspect network_name
+--> To connect a container to the network: docker network connect networkName contName
+--> apt install iputils-ping -y : command to install ping checks
+--> To disconnect from the container: docker network disconnect NetworkName contName
+--> To prune: docker network prune
+
+-->by default it's not possible to communicate from one n/w to another n/w
+--> all containers should not communicate eachother because security issues related came
+-->so we need to create seperate n/w for different containers
+we will communicate through n/w
+we will connect from frontend n/w to backend n/w , then in which containers in frontend those are only 
+communicate with backend containers not communicate with db n/w's  because i given communication in n/w leven 
+(this part we will discuss end )
+
+docker run -d --name cont1 --network database nginx
+
+scenario: in bridge n/w have cont1 & cont2 and in seperate n/w have cont3 then cont1/cont2 not communicate with cont3
+bcz seperate n/w's
+
+--> docker network connect bridge(which n/w)  cont3(whih cont)  -- this is only only one n/w to one container 
+then cont1/cont2 will communicate with cont3
+
+next we will discuss about one n/w to another n/w using docker compose
+
+--> docker network disconnect bridge cont3
+--> docker network rm networkname(nodata, no containers)
+if you want to delete the n/w then it should be empty there is no containers
+
+
+DOCKER COMPOSE:
+===========================
+It is a tool used to build, run and ship the multiple containers for application.
+It is used to create multiple containers in a single host.
+it allows you to describe the services, networks, and volumes for your application in a single fi le, typically named docker-compose.yml/docker-compose.yaml/compose.yml/compose.yaml
+This fi le contains confi gurations for different services, specifying how they should be built, confi gured, and connected.
+It used YAML fi le to manage multi containers as a single service.
+The Compose fi le provides a way to document and confi gure all of the application’s service dependencies (databases, queues, caches, web service APIs, etc).
+
+Docker Compose is a tool, that is the used to define and run multiple containers as a single application in single file
+
+define all things in one file(YAML) then we can run that file automatically created images and comtainers/voulumes/n/w's
+
+DOCKER COMPOSE INSTALLATION:
+sudo mkdir -p /usr/libexec/docker/cli-plugins
+sudo curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose version
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
