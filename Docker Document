@@ -654,8 +654,342 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 docker-compose version
 
+KEY FEATURES OF DOCKER COMPOSE:
+Services: These are the different components or containers of your application, such as a web server, a database, or any other service.
+Networks: Docker Compose allows you to define custom networks for your services, enabling communication between them.
+Volumes: You can specify volumes to persist data or share it between containers.
+Build: Docker Compose can build custom Docker images for your services based on the configurations you provide.
 
 
+---
+services:
+  frontend: 
+    container_name: frontend
+    image: nginx
+    port:
+     - "1111:80"
+
+ Backend: 
+    container_name: Backend 
+    image: httpd
+    port:
+     - "1112:80"
+...
+
+docker-compose up -d (run )
+then automatically created images and containers
+
+docker-compose stop 
+docker-compose start
+
+--> i want to know to which containers created from docker-compose
+(docker-compose ps)
+--> we can't take from manually created
+
+-> in compose file which images are used 
+(docker-compose images)
+
+-> to see the compose file 
+(docker-compose config)
+
+-> docker-compose pause (containers are running but it paused, it's not gooing to take new request)
+(at that time we can't access the application)
+
+
+DOCKER COMPOSE COMMANDS:
+=================================
+docker-compose up -d     - used to run the docker fi le
+docker-compose build     - used to build the images
+docker-compose down      - remove the containers
+docker-compose config    - used to show the confi gurations of the compose fi le
+docker-compose images    - used to show the images of the fi le
+docker-compose stop      - stop the containers
+docker-compose logs      - used to show the log details of the fi le
+docker-compose pause     - to pause the containers
+docker-compose unpause   - to unpause the containers
+docker-compose ps        - to see the containers of the compose fi le
+
+
+Situation: i want to freeze the containers temporary, container running only but application can't access for users,
+we can use pause and in containers some bugs are there then to solve it also after that we can unpause the container
+
+--> never provide image directly
+
+Suppose we can take PAYTM(bank, bus, flight, train, gold, recharge, stocks) then different serverices are there for those services we need to create seperate Docker file and create images 
+if we did some changes in bank , train, gold services whenever we updated the code then again create the image and push to dockerhub and then manally 
+put in compose file that is fine bcz this have only 7 services
+
+suppose if in app have 200 services, in 45 servuces(some thing updated gain we will do same process this process looks like manual
+--> so we can use build to overcom this problem 
+
+--> in compose file, don't give the image, instead of image we can take build: docker file path for every services
+
+--> docker-compose build (at a time execute the docker file whatever mentioned dockerfile path's in build)
+then automatically new images came into compose file
+
+--> docker-compose up -d( in which containers are changes those containers are recreated remaining as it is there working)
+
+example:
+mkdir paytm
+cd  paytm
+mkdir bank bus flight train
+cd bank
+vim index.html
+<h1> bank <h1>
+
+vim Dockerfile 
+FROM nginx:alpine
+COPY index.html /usr/share/nginx/html
+
+cp bank/* bus/
+cp bank/* flight/
+cp bank/* train
+
+and modified code in all services
+
+--> if you install the tree package we can see the which files are present in which folders)
+
+yum install tree -y
+
+tree (it will show)
+
+---
+services:
+  bank:
+    container_name: bank
+    build: ./bank
+    port : 
+      - "1111:80"
+ bus:
+    container_name: bus
+    build: ./bus
+    port : 
+      - "1112:80"
+
+ flight:
+    container_name: flight
+    build: ./flight
+    port : 
+      - "1113:80"
+ train:
+    container_name: train
+    build: ./train
+    port : 
+      - "1114:80"
+...
+
+we should allow all ports in security group's
+
+-->docker-compose build 
+before executes this command need to install buildx for images
+
+#DOCKER BUILDX INSTALLATION COMMANDS
+mkdir -p ~/.docker/cli-plugins && \
+curl -SL https://github.com/docker/buildx/releases/download/v0.17.0/buildx-v0.17.0.linux-$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
+-o ~/.docker/cli-plugins/docker-buildx && \
+chmod +x ~/.docker/cli-plugins/docker-buildx
+
+docker-compose up -d
+--> they try to access all application with respective port
+
+--> if you changed in index.html then run (docker-compose build)
+all images are executed but in which files are changes only that images are recreated
+
+--> docker-compose up -d (in which containers chnages are happenend only that containers are recreated
+
+docker-compose ps 
+
+---
+services:
+  frontend:
+    container_name: cont1
+    image: nginx
+    ports:
+      - "1111:80"
+    networks:
+      - network1
+    volumes:
+      - volume1:/sandhya/
+backend:
+    container_name: cont2
+    image: any image 
+    ports:
+      - "1112:80"
+    networks:
+      - network2
+    volumes:
+      - volume2:/devops/
+database:
+    container_name: cont3
+    image: any image
+    ports:
+      - "1113:80"
+    networks:
+      - network3
+    volumes:
+      - volume3:/devsecops/
+
+networks:
+  network1:
+    driver: bridge
+  network2:
+    driver: bridge
+  network3:
+    driver: bridge
+
+volumes:
+  volume1:
+  volume2:
+  volume3:
+...
+
+One scenario: one docker file is there 
+for dev one api there(www.dev.com), 
+for test one api is there(www.test.com)
+for prod one api is there(www.prod.com)
+if we use same api it won't work the application, so we will use respective API's 
+everytime need to change the docker file for api's so while creating the containers we can give through variables 
+--> deveoper send code include .env 
+vim dev.env 
+  api = www.dev.com
+  env = dev
+  client = IBM
+  app = swiggy
+  port = 8000
+
+docker run -d --name containername -p 1116:80 --env-file= dev.env anignx   ( this is manual)
+to check the env variables go to cont then do -->  printenv
+docker exec -it contaname "ls"  or "printenv" (shortcut everytime we are going into container and the check right)
+
+--> without taking .env file we can give direct env variables in compose file
+(we are not giving username and password in this compose file)
+
+if remove all thing 
+--> docker-compose down
+--> docker rm -f cont2 cont1 
+docker ps
+
+RESOURCES:
+====================
+--> we can mentioned resources(cpu, RAM) in compose file, if we are not mentioned resources then container 
+cosumes more, so we can set the linits for containers
+
+deploy:
+      resources:
+        reservations:  (for creating the container this is the minimum requirement)
+          cpus: "0.5"
+          memory: 100M
+        limits:(after created the container it will use until that maximum limit)
+          cpus: "1.0"
+          memory: 200M
+
+docker-compose up -d 
+
+-> if i would like to know which container uses how much CPU and RAM uses then we can use
+docker stats
+
+--> if container uses maximum no of resources so in realtime we are monitoring the container like 
+if container cpu usage > 60% we will get alert from mail
+
+Rule 
+======
+DB start then 
+application start 
+
+if we write first application then after db at that time  application created  db still not created at that time we are using depends_on
+backend depends on db, so first db service run after that application will run
+
+so in backend services we can give 
+depends_on:
+      - database
+
+
+OVERALL COMPOSE FILE
+=====================================
+---
+services:
+  frontend:
+    container_name: cont1
+    image: any image
+    ports:
+      - "1111:80"
+    networks:
+      - network1
+    volumes:
+      - volume1:/sandhya/
+    env_file:
+      - dev.env
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.5"
+          memory: 100M
+        limits:
+          cpus: "1.0"
+          memory: 200M
+
+  backend:
+    container_name: cont2
+    image: any image
+    ports:
+      - "1112:80"
+    networks:
+      - network2
+    volumes:
+      - volume2:/devops/
+    environment:
+      APP_ENV: prod
+      APP_PORT: 3000
+      DB_PORT: 3306
+      DB_HOST: mysql
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.5"
+          memory: 100M
+        limits:
+          cpus: "1.0"
+          memory: 200M
+    depends_on:
+      - database
+
+
+  database:
+    container_name: cont3
+    image: any image
+    ports:
+      - "1113:80"
+    networks:
+      - network3
+    volumes:
+      - volume3:/devsecops/
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.5"
+          memory: 100M
+        limits:
+          cpus: "1.0"
+          memory: 200M
+
+
+
+networks:
+  network1:
+    driver: bridge
+  network2:
+    driver: bridge
+  network3:
+    driver: bridge
+
+volumes:
+  volume1:
+  volume2:
+  volume3:
+
+
+Restart Polices:
+==================
 
 
 
